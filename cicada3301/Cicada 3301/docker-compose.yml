@@ -9,7 +9,7 @@ services:
   app:
     build: ./server
     ports:
-      - "5000:5000"
+      - "5555:5555"
     volumes:
       - ./server:/app
       - ./client/build:/app/client/build  # Monta o build do React no Flask
