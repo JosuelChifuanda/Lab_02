@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /Poem1/
+Disallow: /Poem2/
+Disallow: /Poem3/
+FLAG{DIRECTORY_ENUMERATION}
+
+

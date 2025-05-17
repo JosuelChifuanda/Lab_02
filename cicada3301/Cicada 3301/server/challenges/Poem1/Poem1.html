@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Labirinto das Sombras - Mensagem Oculta</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #000;
+      color: #8A2BE2;
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 1rem;
+      user-select: none;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Efeito CRT */
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.15) 0px,
+        rgba(0, 0, 0, 0.15) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      pointer-events: none;
+      animation: flicker 0.15s infinite;
+      z-index: 2;
+    }
+
+    .container {
+      position: relative;
+      z-index: 3;
+      max-width: 800px;
+      padding: 2rem;
+      border: 1px solid #8A2BE2;
+      border-radius: 5px;
+      box-shadow: 0 0 30px rgba(138, 43, 226, 0.3);
+      background: linear-gradient(45deg, rgba(138, 43, 226, 0.05), rgba(0, 0, 0, 0.8));
+      backdrop-filter: blur(2px);
+    }
+
+    pre {
+      font-size: 1.4rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      margin: 2rem 0;
+      color: #9a7eff;
+      text-shadow:
+        0 0 10px #8A2BE2,
+        0 0 20px #8A2BE2;
+      overflow: hidden;
+      border-right: 2px solid #8A2BE2;
+      animation: 
+        typing 3.5s steps(40, end),
+        blink-caret 0.75s step-end infinite;
+    }
+
+    .secret-box {
+      position: relative;
+      color: #00FF00;
+      font-size: 1.1rem;
+      background: rgba(0, 255, 0, 0.05);
+      border: 1px solid #00FF00;
+      border-radius: 4px;
+      padding: 1rem;
+      margin: 2rem auto;
+      max-width: 500px;
+      box-shadow:
+        0 0 10px #00FF00,
+        0 0 30px rgba(0, 255, 0, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      user-select: text;
+      z-index: 3;
+    }
+
+    .secret-box:hover {
+      transform: scale(1.02);
+      box-shadow:
+        0 0 20px #00FF00,
+        0 0 40px rgba(0, 255, 0, 0.3);
+    }
+
+    .secret-box::before {
+      content: ">";
+      position: absolute;
+      left: -30px;
+      color: #00FF00;
+      animation: blink 1s step-end infinite;
+    }
+
+    /* Matrix Background */
+    #matrix-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      opacity: 0.15;
+    }
+
+    /* Animações */
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 100% }
+    }
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: #8A2BE2 }
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.9; }
+      50% { opacity: 1; }
+      100% { opacity: 0.8; }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Responsivo */
+    @media (max-width: 768px) {
+      pre {
+        font-size: 1.1rem;
+      }
+      
+      .secret-box {
+        font-size: 0.9rem;
+        max-width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix-canvas"></canvas>
+  <div class="container">
+    <pre>
+Entre linhas de versos e silêncio profundo,
+Jaz o coração do sistema, exposto ao mundo...
+    </pre>
+
+    <a href="https://medium.com/@diegosantosseabra/poesia-de-programador-9cbcb4edcee9" target="_blank" class="secret-box">
+      medium.com/@diegosantosseabra/poesia-de-programador-9cbcb4edcee9
+    </a>
+  </div>
+
+  <script>
+    // Configuração do efeito Matrix
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Configurar canvas para ocupar toda a tela
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // Caracteres binários
+    const binary = '01';
+    const chars = binary.split('');
+
+    // Configuração da chuva
+    const fontSize = 14;
+    const columns = canvas.width/fontSize;
+    const drops = [];
+    for(let x = 0; x < columns; x++) drops[x] = 1;
+
+    // Função de desenho
+    function draw() {
+      // Fundo semi-transparente para efeito de rastro
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Estilo do texto
+      ctx.fillStyle = '#00FF00';
+      ctx.font = fontSize + 'px Share Tech Mono';
+
+      // Desenhar caracteres
+      for(let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+        
+        // Resetar gota no topo aleatoriamente
+        if(drops[i]*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+
+    // Iniciar animação
+    setInterval(draw, 50);
+  </script>
+</body>
+</html>
+<!-- FLAG{G1t_L34k_3xpl01t3d} -->

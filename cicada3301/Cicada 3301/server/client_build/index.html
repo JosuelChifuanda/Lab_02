@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CyberNexus Terminal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Ubuntu+Mono:wght@400;700&family=Orbitron:wght@600&display=swap');
+
+    :root {
+      --neon-green: #00ff88;
+      --cyber-purple: #8A2BE2;
+      --dark-bg: #0a0a0f;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--dark-bg);
+      color: var(--neon-green);
+      font-family: 'Ubuntu Mono', monospace;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* Efeito Matrix 3D */
+    .matrix-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.1;
+      z-index: 0;
+    }
+
+    /* Efeito de profundidade holográfica */
+    .hologram-effect {
+      position: relative;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+
+    #terminal {
+      width: 90vw;
+      max-width: 1000px;
+      height: 70vh;
+      background: rgba(10, 10, 15, 0.95);
+      border: 2px solid var(--neon-green);
+      border-radius: 8px;
+      box-shadow: 
+        0 0 40px var(--neon-green),
+        inset 0 0 20px rgba(0, 255, 136, 0.1);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .prompt {
+      color: var(--neon-green);
+      text-shadow: 0 0 10px var(--neon-green);
+      font-family: 'Orbitron', sans-serif;
+      animation: glitch 3s infinite;
+    }
+
+    .terminal-body {
+      height: calc(100% - 60px);
+      overflow-y: auto;
+      padding-right: 1rem;
+    }
+
+    .command-line {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .cursor {
+      width: 10px;
+      height: 20px;
+      background: var(--neon-green);
+      animation: blink 1s infinite;
+    }
+
+    .output-line {
+      margin: 0.5rem 0;
+      position: relative;
+    }
+
+    /* Animações complexas */
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+      100% { transform: translate(0); }
+    }
+
+    @keyframes scan {
+      0% { background-position: 0 0; }
+      100% { background-position: 0 100%; }
+    }
+
+    @keyframes particle {
+      from { transform: translateY(-100vh); }
+      to { transform: translateY(100vh); }
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    /* Efeito de partículas WebGL */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Efeito de digitalização */
+    .scanlines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 255, 136, 0.05) 1%,
+        transparent 2%
+      );
+      animation: scan 4s linear infinite;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <canvas class="matrix-bg" id="matrix"></canvas>
+  <canvas class="particles" id="particles"></canvas>
+  <div class="scanlines"></div>
+
+  <div id="terminal" class="hologram-effect">
+    <div class="terminal-header">
+      <div class="prompt">root@cyberseclab:~#</div>
+      <div class="system-status">
+        <span class="status-led"></span>
+        <span>ACTIVE MODE</span>
+      </div>
+    </div>
+
+    <div class="terminal-body" id="output">
+      <div class="output-line">[ SYSTEM BOOT ] CyberNexus Terminal v3.1.5</div>
+      <div class="output-line">[ INIT ] Loading security protocols...</div>
+      <div class="output-line">[ WARNING ] Unauthorized access detected</div>
+      <div class="output-line">>    Bem-vindo ao desafio — encontre as vulnerabilidades escondidas e descubra os segredos desse labirinto digital. </div>
+    </div>
+
+    <div class="command-line">
+      <span class="prompt-symbol">></span>
+      <input type="text" id="commandInput" class="cyber-input" autofocus>
+      <div class="cursor"></div>
+    </div>
+  </div>
+
+  <script>
+    // Efeito Matrix 3D
+    const matrixCanvas = document.getElementById('matrix');
+    const matrixCtx = matrixCanvas.getContext('2d');
+    
+    function resizeMatrix() {
+      matrixCanvas.width = window.innerWidth;
+      matrixCanvas.height = window.innerHeight;
+    }
+    
+    window.addEventListener('resize', resizeMatrix);
+    resizeMatrix();
+
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+    const drops = Array(Math.floor(matrixCanvas.width / 20)).fill(1);
+
+    function drawMatrix() {
+      matrixCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      matrixCtx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+      
+      matrixCtx.fillStyle = '#00ff88';
+      matrixCtx.font = '15px Ubuntu Mono';
+
+      drops.forEach((drop, i) => {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        matrixCtx.fillText(text, i * 20, drop * 20);
+        
+        if (drop * 20 > matrixCanvas.height || Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      });
+    }
+
+    setInterval(drawMatrix, 50);
+
+    // Sistema de partículas WebGL
+    const particleCanvas = document.getElementById('particles');
+    const gl = particleCanvas.getContext('webgl');
+    
+    function initParticles() {
+      // Configuração complexa de partículas 3D
+      // (Código WebGL removido para brevidade)
+    }
+    initParticles();
+
+    // Terminal interativo
+    const commandInput = document.getElementById('commandInput');
+    const output = document.getElementById('output');
+
+    commandInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const command = commandInput.value;
+        output.innerHTML += `<div class="output-line">> ${command}</div>`;
+        processCommand(command);
+        commandInput.value = '';
+        output.scrollTop = output.scrollHeight;
+      }
+    });
+
+    function processCommand(command) {
+      const responses = {
+        help: 'Available commands: scan, exploit, decrypt, analyze',
+        scan: 'Initiating network scan... Vulnerabilities detected: 3',
+        exploit: 'ERROR: No target specified',
+        decrypt: 'Initializing quantum decryption module...',
+        analyze: 'Running heuristic analysis...'
+      };
+
+      const response = responses[command.toLowerCase()] || `Command not found: ${command}`;
+      output.innerHTML += `<div class="output-line">${response}</div>`;
+    }
+
+    // Easter egg no console
+    console.log(
+      '%c[ CYBER NEXUS TERMINAL ]\n%cAccess Level:\nThreat Detection: 100%\nEncryption: Quantum-256\n',
+      'color: #00ff88; font-size: 18px; font-family: Orbitron;',
+      'color: #8A2BE2; font-size: 14px;'
+    );
+  </script>
+</body>
+</html>

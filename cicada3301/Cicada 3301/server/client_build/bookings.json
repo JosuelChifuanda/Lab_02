@@ -1,0 +1,29 @@
+{
+    "3": {
+        "id": 3,
+        "user": "user1",
+        "origin": "Neo-Tóquio",
+        "destination": "ArcNet",
+        "date": "2077-12-10",
+        "seat": "23B",
+        "gate": "07"
+    },
+    "4": {
+        "id": 4,
+        "user": "user2",
+        "origin": "Sector-12",
+        "destination": "Midgar",
+        "date": "2077-12-11",
+        "seat": "15A",
+        "gate": "12"
+    },
+    "5": {
+        "id": 5,
+        "user": "admin",
+        "origin": "[REDACTED]",
+        "destination": "Root",
+        "date": "2077-01-01",
+        "details": "Nível de acesso: ROOT",
+        "flag": "FLAG{IDOR_Exploited}"
+    }
+}

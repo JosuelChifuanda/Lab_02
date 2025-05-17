@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberWings Airlines</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Orbitron:wght@500&display=swap');
+
+        :root {
+            --neon-green: #00ff88;
+            --cyber-blue: #00f3ff;
+            --dark-bg: #0a0a1a;
+            --airline-blue: #1a237e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: #fff;
+            font-family: 'Space Mono', monospace;
+            min-height: 100vh;
+        }
+
+        .airline-header {
+            background: var(--airline-blue);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 3px solid var(--neon-green);
+        }
+
+        .search-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            color: var(--neon-green);
+            margin-bottom: 0.5rem;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .cyber-input {
+            background: linear-gradient(45deg, 
+                rgba(255,255,255,0.1), 
+                rgba(45,45,45,0.3));
+            border: 1px solid var(--neon-green);
+            color: #fff;
+            padding: 1rem;
+            border-radius: 4px;
+            font-size: 1rem;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .cyber-input option {
+            background: #2d2d2d;
+            margin: 5px 0;
+            padding: 12px;
+            border-left: 3px solid var(--neon-green);
+            color: #fff;
+            font-family: 'Space Mono', monospace;
+            border-radius: 2px;
+        }
+
+        .cyber-input option:hover {
+            background: #3d3d3d !important;
+            transform: translateX(5px);
+            box-shadow: 2px 0 8px rgba(0, 255, 136, 0.2);
+        }
+
+        .cyber-input option:checked {
+            background: var(--airline-blue);
+        }
+
+        .flight-results {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .flight-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--neon-green);
+            border-radius: 8px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flight-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, 
+                transparent, 
+                rgba(0, 255, 136, 0.1), 
+                transparent);
+            transform: rotate(45deg);
+            animation: scan 6s linear infinite;
+        }
+
+        @keyframes scan {
+            from { transform: translateY(-100%); }
+            to { transform: translateY(100%); }
+        }
+
+        .book-button {
+            background: var(--neon-green);
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .book-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--neon-green);
+        }
+
+        .booking-details {
+            background: rgba(0,0,0,0.7);
+            padding: 2rem;
+            border: 2px solid var(--cyber-blue);
+            border-radius: 10px;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .flag {
+            color: var(--neon-green);
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .flight-results {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="airline-header">
+        <h1>✈️ CyberWings Airlines</h1>
+        <p>Sua jornada através do ciberespaço começa aqui</p>
+    </header>
+
+    <div class="search-container">
+        <div class="action-bar">
+            <h2>🛫 Bem-vindo, veje os voos disponiveis e faça sua reserva</h2>
+        </div>
+
+        <form class="search-form" onsubmit="event.preventDefault(); searchFlights()">
+            <div class="form-group">
+                <label>Origem</label>
+                <select class="cyber-input" id="origin">
+                    <option>Neo-Tóquio</option>
+                    <option>Sector-12</option>
+                    <option>Rapture</option>
+                    <option>CyberCentral</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Destino</label>
+                <select class="cyber-input" id="destination">
+                    <option>ArcNet</option>
+                    <option>Columbia</option>
+                    <option>Midgar</option>
+                    <option>Root</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Data de Partida</label>
+                <input type="date" class="cyber-input" id="departureDate">
+            </div>
+
+            <div class="form-group">
+                <button class="book-button" type="submit">
+                    🔍 Buscar Voos
+                </button>
+            </div>
+        </form>
+
+        <div class="flight-results" id="flightResults">
+            <div class="flight-card">
+                <div class="flight-info">
+                    <h3>Neo-Tóquio → ArcNet</h3>
+                    <p>⏱ 4h15m | 🛩 Arasaka Jetstream X</p>
+                    <p>💰 ₡2.500</p>
+                </div>
+                <button class="book-button" onclick="showBooking(3)">Reservar</button>
+            </div>
+
+            <div class="flight-card">
+                <div class="flight-info">
+                    <h3>Sector-12 → Midgar</h3>
+                    <p>⏱ 3h55m | 🛩 Mako Reactor Class</p>
+                    <p>💰 ₡3.800</p>
+                </div>
+                <button class="book-button" onclick="showBooking(4)">Reservar</button>
+            </div>
+        </div>
+
+        <div id="bookingDetails" class="booking-details">
+            <h3>📋 Detalhes da Reserva #<span id="bookingId"></span></h3>
+            <div id="detailsContent"></div>
+            <div class="action-bar">
+                <button class="book-button" onclick="hideDetails()">🗙 Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let bookings = {};
+
+        async function loadBookings() {
+            try {
+                const response = await fetch('bookings.json');
+                bookings = await response.json();
+            } catch (error) {
+                console.error('Erro ao carregar reservas:', error);
+            }
+        }
+
+        async function showBooking(id) {
+            await loadBookings();
+            const booking = bookings[id] || {};
+            const details = `
+                <p>Origem: ${booking.origin || 'N/A'}</p>
+                <p>Destino: ${booking.destination || 'N/A'}</p>
+                <p>Data: ${booking.date || 'N/A'}</p>
+                <p>Assento: ${booking.seat || 'N/A'}</p>
+                ${booking.flag ? `<div class="flag">🚩 ${booking.flag}</div>` : ''}
+            `;
+
+            document.getElementById('detailsContent').innerHTML = details;
+            document.getElementById('bookingId').textContent = id;
+            document.getElementById('bookingDetails').style.display = 'block';
+            window.history.pushState({}, '', `?id=${id}`);
+        }
+
+        // Inicialização
+        (async function init() {
+            await loadBookings();
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.has('id')) {
+                showBooking(parseInt(urlParams.get('id')));
+            }
+        })();
+
+        function newSearch() {
+            document.getElementById('flightResults').style.display = 'none';
+            document.getElementById('bookingDetails').style.display = 'none';
+            document.querySelector('form').reset();
+        }
+
+        function searchFlights() {
+            document.getElementById('flightResults').style.display = 'grid';
+        }
+
+        function hideDetails() {
+            document.getElementById('bookingDetails').style.display = 'none';
+            window.history.pushState({}, '', window.location.pathname);
+        }
+
+        // Dicas no console
+        console.log("%c[DEBUG] Tente acessar: /?id=5 para recursos avançados", 
+            "color: #00ff88; font-weight: bold;");
+        console.log("%c[ALERTA] Verificação de autenticação não implementada", 
+            "color: #ff0044; font-weight: bold;");
+    </script>
+</body>
+</html>

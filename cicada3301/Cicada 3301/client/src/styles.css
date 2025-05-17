@@ -1,0 +1,53 @@
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #000;
+}
+
+.neon-nav {
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.9);
+  border-bottom: 2px solid #8A2BE2;
+  box-shadow: 0 0 25px rgba(138, 43, 226, 0.4);
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.nav-link {
+  position: relative;
+  padding: 0.8rem 1.5rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.nav-text {
+  color: #00FFEF;
+  font-family: 'Courier New', monospace;
+  font-size: 1.2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.neon-hover:hover {
+  text-shadow: 0 0 10px #8A2BE2,
+               0 0 20px #8A2BE2,
+               0 0 40px #8A2BE2;
+}
+
+.content-container {
+  flex: 1;
+  padding: 2rem;
+}
+
+.terminal-wrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.9);
+  border-top: 2px solid #00FFEF;
+  box-shadow: 0 -5px 20px rgba(0, 255, 239, 0.2);
+}
